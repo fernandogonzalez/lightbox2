@@ -60,12 +60,37 @@ module.exports = function(grunt) {
         tasks: ['jshint', 'jscs']
       }
     },
+    sass: {
+      dist: {
+        options: {
+          sourcemap: 'none'
+        },
+        files: [{
+          expand: true,
+          cwd: 'src/scss',
+          src: ['**/*.scss'],
+          dest: 'dist/css',
+          ext: '.css'
+        }]
+      }
+    },
+    postcss: {
+      options: {
+        map: false,
+        processors: [
+          require('autoprefixer')
+        ]
+      },
+      dist: {
+        src: 'dist/css/lightbox.css'
+      }
+    },
     cssmin: {
       minify: {
           src: 'dist/css/lightbox.css',
           dest: 'dist/css/lightbox.min.css'
       }
-    }
+    },
   });
 
   grunt.loadNpmTasks('grunt-contrib-concat');
@@ -75,9 +100,11 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
-  grunt.loadNpmTasks("grunt-jscs");
+  grunt.loadNpmTasks('grunt-contrib-sass');
+  grunt.loadNpmTasks('grunt-postcss');
+  grunt.loadNpmTasks('grunt-jscs');
 
   grunt.registerTask('default', ['connect', 'watch']);
   grunt.registerTask('test', ['jshint', 'jscs']);
-  grunt.registerTask('build', ['jshint', 'jscs', 'copy:dist', 'concat', 'uglify', 'cssmin:minify']);
+  grunt.registerTask('build', ['sass', 'postcss', 'jshint', 'jscs', 'copy:dist', 'concat', 'uglify', 'cssmin:minify']);
 };
